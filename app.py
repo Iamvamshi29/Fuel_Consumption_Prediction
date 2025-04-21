@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import logging
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LogisticRegression, Ridge
 from sklearn.svm import SVC, SVR
@@ -184,10 +184,78 @@ def train_models():
     
     logging.info("Models trained and evaluated successfully")
 
+# Make prediction from form input
+def predict_from_input(input_data):
+    # Scale the input data
+    X = np.array([
+        input_data['rpm'],
+        input_data['speed'],
+        input_data['throttle_position'],
+        input_data['acceleration'],
+        input_data['engine_load']
+    ]).reshape(1, -1)
+    X_scaled = scaler.transform(X)
+    
+    # Make predictions with all models
+    classification_results = {}
+    for name, model in classification_models.items():
+        if hasattr(model, 'predict_proba'):
+            prob = model.predict_proba(X_scaled)[0][1]
+            classification_results[name] = float(prob)
+        else:
+            pred = model.predict(X_scaled)[0]
+            classification_results[name] = float(pred)
+    
+    regression_results = {}
+    for name, model in regression_models.items():
+        pred = model.predict(X_scaled)[0]
+        regression_results[name] = float(pred)
+    
+    return {
+        'classification_results': classification_results,
+        'regression_results': regression_results
+    }
+
 # Routes
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    # Get form input
+    input_data = {
+        'rpm': float(request.form.get('rpm')),
+        'speed': float(request.form.get('speed')),
+        'throttle_position': float(request.form.get('throttle_position')),
+        'acceleration': float(request.form.get('acceleration')),
+        'engine_load': float(request.form.get('engine_load'))
+    }
+    
+    # Make predictions
+    predictions = predict_from_input(input_data)
+    
+    # Find best models
+    best_class_model = max(predictions['classification_results'].items(), 
+                           key=lambda x: classificationMetrics[x[0]]['f1_score'])[0]
+    best_reg_model = max(regressionMetrics.items(), 
+                        key=lambda x: x[1]['r2'])[0]
+    
+    # Return results page
+    return render_template('results.html', 
+                         input_data=input_data,
+                         predictions=predictions,
+                         best_class_model=best_class_model,
+                         best_reg_model=best_reg_model)
+
+@app.route('/graphs')
+def graphs():
+    # For simulation option in dropdown
+    return render_template('graphs.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/get_data')
 def get_data():
@@ -240,12 +308,32 @@ def get_data():
     
     return jsonify(response)
 
+# Global variables for metrics access in routes
+classificationMetrics = {}
+regressionMetrics = {}
+
 # Create directory for static files if it doesn't exist
 os.makedirs('static/js', exist_ok=True)
 os.makedirs('static/css', exist_ok=True)
 
 # Initialize the application
 init_app()
+
+# Load metrics for use in routes
+try:
+    with open('static/js/model_metrics.js', 'r') as f:
+        metrics_content = f.read()
+        # Extract classification metrics
+        class_start = metrics_content.find('{', metrics_content.find('classificationMetrics'))
+        class_end = metrics_content.find('};', class_start) + 1
+        classificationMetrics = json.loads(metrics_content[class_start:class_end])
+        
+        # Extract regression metrics
+        reg_start = metrics_content.find('{', metrics_content.find('regressionMetrics'))
+        reg_end = metrics_content.find('};', reg_start) + 1
+        regressionMetrics = json.loads(metrics_content[reg_start:reg_end])
+except Exception as e:
+    logging.error(f"Error loading metrics: {e}")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
@@ -17,230 +15,108 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="fas fa-gas-pump me-2"></i>
                 Fuel Consumption Analyzer
             </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('graphs') }}">Graphs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <div class="container mt-4">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-10 mx-auto">
                 <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Real-time Data Panel</h5>
-                        <button id="toggleSimulation" class="btn btn-primary btn-sm">
-                            <i class="fas fa-play me-1"></i> Start Simulation
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">RPM</h6>
-                                        <h4 id="rpm-value">0</h4>
-                                        <div class="progress mt-2">
-                                            <div id="rpm-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">Speed</h6>
-                                        <h4 id="speed-value">0 km/h</h4>
-                                        <div class="progress mt-2">
-                                            <div id="speed-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">Throttle</h6>
-                                        <h4 id="throttle-value">0%</h4>
-                                        <div class="progress mt-2">
-                                            <div id="throttle-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">Acceleration</h6>
-                                        <h4 id="acceleration-value">0 m/s²</h4>
-                                        <div class="progress mt-2">
-                                            <div id="acceleration-progress" class="progress-bar" role="progressbar" style="width: 50%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">Engine Load</h6>
-                                        <h4 id="engine-load-value">0%</h4>
-                                        <div class="progress mt-2">
-                                            <div id="engine-load-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="card-title">Fuel Consumption</h6>
-                                        <h4 id="fuel-consumption-value">0 L/h</h4>
-                                        <div class="progress mt-2">
-                                            <div id="fuel-consumption-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Fuel Consumption Graph -->
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="mb-0">Fuel Consumption Over Time</h5>
+                        <h5 class="mb-0">Predict Fuel Consumption & Driving Profile</h5>
                     </div>
                     <div class="card-body">
-                        <canvas id="fuelConsumptionChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Classification Graph -->
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0">Driving Profile Classification</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="classificationChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Models Comparison -->
-        <div class="row">
-            <div class="col-12 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs" id="modelTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="classification-tab" data-bs-toggle="tab" data-bs-target="#classification" type="button" role="tab" aria-controls="classification" aria-selected="true">Classification Models</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="regression-tab" data-bs-toggle="tab" data-bs-target="#regression" type="button" role="tab" aria-controls="regression" aria-selected="false">Regression Models</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content" id="modelTabsContent">
-                            <!-- Classification Tab -->
-                            <div class="tab-pane fade show active" id="classification" role="tabpanel" aria-labelledby="classification-tab">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Model</th>
-                                                <th>Accuracy</th>
-                                                <th>Precision</th>
-                                                <th>Recall</th>
-                                                <th>F1 Score</th>
-                                                <th>Current Prediction</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="classificationTable">
-                                            <!-- Will be populated by JavaScript -->
-                                        </tbody>
-                                    </table>
+                        <form action="{{ url_for('predict') }}" method="POST">
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="rpm" name="rpm" placeholder="RPM" min="800" max="7000" value="2000" required>
+                                        <label for="rpm">Engine RPM (800-7000)</label>
+                                    </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h6>Metric Comparison</h6>
-                                    <canvas id="classificationMetricsChart"></canvas>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="speed" name="speed" placeholder="Speed" min="0" max="200" value="60" required>
+                                        <label for="speed">Speed (km/h)</label>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <!-- Regression Tab -->
-                            <div class="tab-pane fade" id="regression" role="tabpanel" aria-labelledby="regression-tab">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Model</th>
-                                                <th>MSE</th>
-                                                <th>MAE</th>
-                                                <th>R²</th>
-                                                <th>Current Prediction</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="regressionTable">
-                                            <!-- Will be populated by JavaScript -->
-                                        </tbody>
-                                    </table>
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="throttle_position" name="throttle_position" placeholder="Throttle Position" min="0" max="100" value="40" required>
+                                        <label for="throttle_position">Throttle Position (%)</label>
+                                    </div>
                                 </div>
-                                <div class="mt-4">
-                                    <h6>Metric Comparison</h6>
-                                    <canvas id="regressionMetricsChart"></canvas>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="acceleration" name="acceleration" placeholder="Acceleration" min="-5" max="5" step="0.1" value="0.5" required>
+                                        <label for="acceleration">Acceleration (m/s²)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="engine_load" name="engine_load" placeholder="Engine Load" min="0" max="100" value="50" required>
+                                        <label for="engine_load">Engine Load (%)</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-calculator me-2"></i>Calculate Predictions
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Information Section -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
+                
+                <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0">About This Application</h5>
+                        <h5 class="mb-0">What do these parameters mean?</h5>
                     </div>
                     <div class="card-body">
-                        <h6>Driving Profile Classification</h6>
-                        <p>
-                            The classification models predict whether your driving style is economical or not based on various 
-                            vehicle parameters like RPM, speed, throttle position, acceleration, and engine load.
-                        </p>
-                        
-                        <h6>Fuel Consumption Prediction</h6>
-                        <p>
-                            The regression models predict fuel consumption in liters per hour based on the same set of parameters.
-                            This helps you understand how your driving behavior affects fuel economy.
-                        </p>
-                        
-                        <h6>Models Used</h6>
-                        <p>
-                            <strong>Classification Models:</strong> Logistic Regression, XGBoost, Random Forest, SVM, K-Nearest Neighbors, and Decision Tree<br>
-                            <strong>Regression Models:</strong> Ridge Regression, XGBoost Regressor, SVR, Random Forest Regressor, and MLPRegressor
-                        </p>
-                        
-                        <h6>Metrics Explained</h6>
-                        <ul>
-                            <li><strong>Accuracy:</strong> Percentage of correct predictions</li>
-                            <li><strong>Precision:</strong> Ratio of true positives to all positive predictions</li>
-                            <li><strong>Recall:</strong> Ratio of true positives to all actual positives</li>
-                            <li><strong>F1 Score:</strong> Harmonic mean of precision and recall</li>
-                            <li><strong>MSE:</strong> Mean Squared Error - average of squared differences between predicted and actual values</li>
-                            <li><strong>MAE:</strong> Mean Absolute Error - average of absolute differences between predicted and actual values</li>
-                            <li><strong>R²:</strong> Coefficient of determination - proportion of variance in the dependent variable predictable from the independent variables</li>
-                        </ul>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-tachometer-alt me-2"></i>Engine RPM</h6>
+                                <p>Engine revolutions per minute. Higher RPM values typically increase fuel consumption. The economic range is usually 1500-2500 RPM.</p>
+                                
+                                <h6><i class="fas fa-tachometer-alt me-2"></i>Speed</h6>
+                                <p>Vehicle speed in kilometers per hour. Most vehicles achieve optimal fuel efficiency between 50-80 km/h.</p>
+                                
+                                <h6><i class="fas fa-gas-pump me-2"></i>Throttle Position</h6>
+                                <p>Measures how far the accelerator pedal is pressed, shown as a percentage. Gentle throttle application (below 50%) is usually more fuel-efficient.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-arrow-up me-2"></i>Acceleration</h6>
+                                <p>Rate of change in speed, measured in meters per second squared. Positive values indicate acceleration, negative values indicate deceleration. Smooth, gradual acceleration (0.5-1.5 m/s²) is typically more economical.</p>
+                                
+                                <h6><i class="fas fa-weight-hanging me-2"></i>Engine Load</h6>
+                                <p>Indicates how hard the engine is working relative to its maximum capacity, shown as a percentage. Lower engine loads generally result in better fuel economy.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -249,9 +125,5 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/model_metrics.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

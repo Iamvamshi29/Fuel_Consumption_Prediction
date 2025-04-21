@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results - Fuel Consumption Analyzer</title>
+    <!-- Bootstrap CSS (Replit dark theme) -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-gas-pump me-2"></i>
+                Fuel Consumption Analyzer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('graphs') }}">Graphs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Prediction Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-header bg-primary bg-opacity-25">
+                                        <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Your Input Parameters</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <th>Engine RPM:</th>
+                                                <td>{{ input_data.rpm }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Speed:</th>
+                                                <td>{{ input_data.speed }} km/h</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Throttle Position:</th>
+                                                <td>{{ input_data.throttle_position }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Acceleration:</th>
+                                                <td>{{ input_data.acceleration }} m/s²</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Engine Load:</th>
+                                                <td>{{ input_data.engine_load }}%</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-success">
+                                    <div class="card-header bg-success bg-opacity-25">
+                                        <h6 class="mb-0"><i class="fas fa-check-circle me-2"></i>Best Model Predictions</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        {% set best_class_result = predictions.classification_results[best_class_model] %}
+                                        {% set is_economic = best_class_result >= 0.5 %}
+                                        {% set best_reg_result = predictions.regression_results[best_reg_model] %}
+                                        
+                                        <div class="text-center mb-4">
+                                            <div class="mb-3">
+                                                <h6>Driving Profile ({{ best_class_model }})</h6>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <span class="display-6 me-2 {{ 'text-success' if is_economic else 'text-danger' }}">
+                                                        <i class="fas {{ 'fa-leaf' if is_economic else 'fa-fire' }}"></i>
+                                                    </span>
+                                                    <h3 class="{{ 'text-success' if is_economic else 'text-danger' }}">
+                                                        {{ "Economical" if is_economic else "Non-Economical" }}
+                                                    </h3>
+                                                </div>
+                                                <div class="small text-muted">
+                                                    {{ (best_class_result * 100) | round(1) }}% probability
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <h6>Fuel Consumption ({{ best_reg_model }})</h6>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <span class="display-6 me-2">
+                                                        <i class="fas fa-tachometer-alt"></i>
+                                                    </span>
+                                                    <h3>
+                                                        {{ best_reg_result | round(2) }} L/h
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <!-- All Models Results -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <ul class="nav nav-tabs card-header-tabs" id="modelTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="classification-tab" data-bs-toggle="tab" data-bs-target="#classification" type="button" role="tab" aria-controls="classification" aria-selected="true">Classification Models</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="regression-tab" data-bs-toggle="tab" data-bs-target="#regression" type="button" role="tab" aria-controls="regression" aria-selected="false">Regression Models</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="tab-content" id="modelTabsContent">
+                                            <!-- Classification Tab -->
+                                            <div class="tab-pane fade show active" id="classification" role="tabpanel" aria-labelledby="classification-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Model</th>
+                                                                <th>Probability of Economical Driving</th>
+                                                                <th>Prediction</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for model_name, prob in predictions.classification_results.items() %}
+                                                            <tr class="{{ 'table-success' if model_name == best_class_model else '' }}">
+                                                                <td>{{ model_name }}</td>
+                                                                <td>{{ (prob * 100) | round(2) }}%</td>
+                                                                <td class="{{ 'text-success' if prob >= 0.5 else 'text-danger' }}">
+                                                                    <i class="fas {{ 'fa-leaf' if prob >= 0.5 else 'fa-fire' }} me-2"></i>
+                                                                    {{ "Economical" if prob >= 0.5 else "Non-Economical" }}
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Regression Tab -->
+                                            <div class="tab-pane fade" id="regression" role="tabpanel" aria-labelledby="regression-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Model</th>
+                                                                <th>Predicted Fuel Consumption</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for model_name, consumption in predictions.regression_results.items() %}
+                                                            <tr class="{{ 'table-success' if model_name == best_reg_model else '' }}">
+                                                                <td>{{ model_name }}</td>
+                                                                <td>{{ consumption | round(2) }} L/h</td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Try Another Prediction
+                            </a>
+                            <a href="{{ url_for('graphs') }}" class="btn btn-primary">
+                                <i class="fas fa-chart-bar me-2"></i>View Detailed Graphs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
