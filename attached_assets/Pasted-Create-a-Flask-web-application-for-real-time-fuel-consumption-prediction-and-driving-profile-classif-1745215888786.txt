@@ -1,0 +1,46 @@
+Create a Flask web application for real-time fuel consumption prediction and driving profile classification.
+
+**Requirements**:
+
+📦 Backend:
+- Use Python with Flask.
+- Include 6+ machine learning models:
+  - For classification: Logistic Regression, XGBoost, Random Forest, SVM, K-Nearest Neighbors, and Decision Tree.
+  - For regression: Ridge Regression, XGBoost Regressor, SVR, Random Forest Regressor, and MLPRegressor.
+- Simulate real-time input data using randomly generated data or a sample CSV file.
+- Output:
+  - For classification: Driving profile → Economical / Non-Economical.
+  - For regression: Fuel consumption (in liters/hour).
+
+📊 Evaluation:
+- Use realistic ML evaluation metrics:
+  - For classification: Accuracy, Precision, Recall, F1 Score.
+  - For regression: MSE, MAE, R².
+- Metrics should be above 90% but **not 100% or 1.00**.
+- Show comparison table for all algorithms.
+- Display classification results over time with a graph highlighting high fuel consumption zones (like an ECG chart).
+- Plot a line chart of fuel consumption over time (real vs predicted).
+- Show comparison bar charts of algorithm performance.
+
+🖥️ Frontend:
+- Use Bootstrap or Tailwind CSS for styling.
+- Homepage:
+  - Title: "Fuel Consumption Analyzer"
+  - Section 1: Real-time input panel
+  - Section 2: Line graph for fuel consumption over time (actual vs predicted)
+  - Section 3: Classification graph (high vs low consumption periods)
+  - Section 4: ML Models Comparison Table (metrics shown in % or decimals with 2 digits)
+  - Section 5: Bar graphs comparing all models on each metric
+
+📁 File Structure:
+- `/app.py` (Flask backend)
+- `/templates/index.html` (Jinja template)
+- `/static/js/` (for graphs)
+- `/static/css/` (for styling)
+- `/models/` (trained .pkl ML models if needed)
+- Include sample CSV file `/data/sample_ecu_data.csv` for simulating data input
+
+📉 Graph Libraries:
+- Use Plotly or Chart.js to create interactive graphs.
+
+🌟 Make it clean, professional, and clearly labeled with helpful tooltips and model explanations.
