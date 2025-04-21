@@ -35,6 +35,70 @@ scaler = StandardScaler()
 # Features to be used for prediction
 features = ['rpm', 'speed', 'throttle_position', 'acceleration', 'engine_load']
 
+# Extended features (these are the descriptive names for UI display)
+extended_features = {
+    'filtered_engine_speed': 'Filtered engine speed',
+    'coolant_temp': 'Engine coolant temperature',
+    'engine_speed': 'Engine speed',
+    'vehicle_speed': 'Vehicle speed',
+    'total_distance': 'Total vehicle distance',
+    'accelerator_position': 'Accelerator pedal position',
+    'brake_state': 'Brake pedal - switches consolidation state',
+    'vehicle_accel_state': 'Acceleration or deceleration vehicle state',
+    'relative_throttle': 'Relative throttle position (% of sensor voltage)',
+    'offset_correction': 'Value of applied offset correction',
+    'clutch_state': 'Clutch pedal - min travel switch state - wire',
+    'instant_engine_speed': 'Instantaneous engine speed (tooth to tooth)',
+    'ambient_temp': 'Ambient air temperature',
+    'engine_load1': 'Engine air load 1 TDC earlier',
+    'engine_load2': 'Engine air load 2 TDC earlier',
+    'engine_load3': 'Engine air load 3 TDC earlier',
+    'engine_load4': 'Engine air load 4 TDC earlier',
+    'predicted_pressure': 'Engine air load using predicted pressure',
+    'air_flow_setpoint': 'Setpoint of the mass air flow pumped into cylinder',
+    'intake_temp': 'Intake air temperature',
+    'throttle_setpoint': 'Throttle valve position setpoint',
+    'throttle_position': 'Throttle valve position',
+    'manifold_pressure': 'Intake manifold pressure',
+    'trapped_air_mass': 'Mass of air trapped in the cylinder for next ignition',
+    'alcohol_adaptive': 'Final alcohol adaptive',
+    'fuel_consumption': 'Injected fuel mass for ADAC (fuel consumption)',
+    'gas_consumption': 'Gas consumption for the mux',
+    'fuel_mass_sum': 'Sum of fuel mass injected on the cylinder',
+    'injection_time1': 'Injection time - cylinder 1 - 1st injection',
+    'injection_time2': 'Injection time - cylinder 2 - 1st injection',
+    'injection_time3': 'Injection time - cylinder 3 - 1st injection',
+    'injection_time4': 'Injection time - cylinder 4 - 1st injection',
+    'catalyst_warmup': 'Catalyst warm-up confirmation',
+    'c_factor': 'C factor',
+    'fuel_mass_setpoint': 'Injected fuel mass setpoint disregarding cylinder',
+    'avg_fuel_mass': 'Average injected fuel mass',
+    'effective_injection_time': 'Effective time injection',
+    'richness_offset': 'Offset applied on richness closed loop',
+    'richness_factor': 'Richness close loop injection time factor applied',
+    'max_ignition_advance': 'Maximum ignition advance',
+    'torque_efficiency': 'Torque efficiency (min static ignition advance)',
+    'indicated_torque': 'Estimated indicated engine torque',
+    'effective_torque': 'Effective engine torque (real and virtual drivers)',
+    'torque_setpoint': 'Effective engine torque setpoint (real/virtual)',
+    'estimated_torque': 'Estimated effective engine torque',
+    'final_torque_target': 'Final torque target after modulation action',
+    'idle_torque_efficiency': 'Torque efficiency for idle speed controller',
+    'torque_correction': 'Torque correction calculated',
+    'final_torque_setpoint': 'Final torque setpoint after modulation action',
+    'battery_voltage': 'Battery voltage',
+    'alternator_power': 'Alternator power'
+}
+
+# Features available as dropdown options
+dropdown_features = [
+    'filtered_engine_speed', 'engine_speed', 'vehicle_speed', 'accelerator_position',
+    'throttle_position', 'manifold_pressure', 'fuel_consumption', 'battery_voltage',
+    'ambient_temp', 'intake_temp', 'coolant_temp', 'brake_state', 'clutch_state',
+    'relative_throttle', 'vehicle_accel_state', 'catalyst_warmup', 'effective_torque',
+    'alternator_power', 'total_distance', 'gas_consumption'
+]
+
 # Initialize data and models
 def init_app():
     global simulation_data
@@ -219,11 +283,13 @@ def predict_from_input(input_data):
 # Routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', 
+                          extended_features=extended_features, 
+                          dropdown_features=dropdown_features)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Get form input
+    # Get form input for core features
     input_data = {
         'rpm': float(request.form.get('rpm')),
         'speed': float(request.form.get('speed')),
@@ -231,6 +297,17 @@ def predict():
         'acceleration': float(request.form.get('acceleration')),
         'engine_load': float(request.form.get('engine_load'))
     }
+    
+    # Collect all additional parameters (extended features)
+    extended_input = {}
+    for feature_key in extended_features.keys():
+        if feature_key not in ['rpm', 'speed', 'throttle_position', 'acceleration', 'engine_load']:
+            value = request.form.get(feature_key)
+            if value is not None and value != '':
+                try:
+                    extended_input[feature_key] = float(value)
+                except ValueError:
+                    extended_input[feature_key] = 0
     
     # Make predictions
     predictions = predict_from_input(input_data)
@@ -244,9 +321,11 @@ def predict():
     # Return results page
     return render_template('results.html', 
                          input_data=input_data,
+                         extended_input=extended_input,
                          predictions=predictions,
                          best_class_model=best_class_model,
-                         best_reg_model=best_reg_model)
+                         best_reg_model=best_reg_model,
+                         extended_features=extended_features)
 
 @app.route('/graphs')
 def graphs():

@@ -54,7 +54,8 @@
                                         <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Your Input Parameters</h6>
                                     </div>
                                     <div class="card-body">
-                                        <table class="table table-sm">
+                                        <h6 class="mb-2">Required Parameters</h6>
+                                        <table class="table table-sm mb-4">
                                             <tr>
                                                 <th>Engine RPM:</th>
                                                 <td>{{ input_data.rpm }}</td>
@@ -76,6 +77,24 @@
                                                 <td>{{ input_data.engine_load }}%</td>
                                             </tr>
                                         </table>
+                                        
+                                        {% if extended_input %}
+                                        <h6 class="mb-2">Additional Parameters</h6>
+                                        <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                                            <table class="table table-sm">
+                                                {% for feature_key, value in extended_input.items() %}
+                                                <tr>
+                                                    <th>{{ extended_features[feature_key] }}:</th>
+                                                    <td>{{ value }}
+                                                    {% if feature_key in ['throttle_position', 'accelerator_position', 'relative_throttle', 'engine_load1', 'engine_load2', 'engine_load3', 'engine_load4'] %}%{% endif %}
+                                                    {% if feature_key in ['ambient_temp', 'intake_temp', 'coolant_temp'] %}°C{% endif %}
+                                                    {% if feature_key == 'battery_voltage' %}V{% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
