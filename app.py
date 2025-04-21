@@ -12,6 +12,8 @@ from sklearn.svm import SVC, SVR
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPRegressor
+from sklearn.naive_bayes import GaussianNB
+from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import StandardScaler
@@ -181,7 +183,9 @@ def train_models():
         'Random Forest': RandomForestClassifier(random_state=42),
         'SVM': SVC(probability=True, random_state=42),
         'K-Nearest Neighbors': KNeighborsClassifier(),
-        'Decision Tree': DecisionTreeClassifier(random_state=42)
+        'Decision Tree': DecisionTreeClassifier(random_state=42),
+        'Naive Bayes': GaussianNB(),
+        'K-Means': KMeans(n_clusters=2, random_state=42)
     }
     
     # Train regression models
@@ -303,6 +307,16 @@ def predict():
                     extended_input[feature_key] = float(value)
                 except ValueError:
                     extended_input[feature_key] = 0
+    
+    # Check for custom parameter input
+    custom_param_name = request.form.get('custom_param_name')
+    custom_param_value = request.form.get('custom_param_value')
+    if custom_param_name and custom_param_value and custom_param_name in extended_features:
+        try:
+            # Override with custom value
+            extended_input[custom_param_name] = float(custom_param_value)
+        except ValueError:
+            pass  # Invalid number input, ignore
     
     # Make predictions
     predictions = predict_from_input(input_data)

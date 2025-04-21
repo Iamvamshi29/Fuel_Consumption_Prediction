@@ -8,6 +8,39 @@ let classificationChart = null;
 let classificationMetricsChart = null;
 let regressionMetricsChart = null;
 
+// Custom parameter handling
+function updateCustomField() {
+    const customParamSelect = document.getElementById('custom_param_name');
+    const customParamValue = document.getElementById('custom_param_value');
+    const selectedParam = customParamSelect.value;
+    
+    if (selectedParam) {
+        // Find the corresponding dropdown in the form
+        const paramDropdown = document.getElementById(selectedParam);
+        if (paramDropdown) {
+            // Disable the dropdown since we'll use the custom value
+            paramDropdown.disabled = true;
+            
+            // Focus on the custom value field
+            customParamValue.focus();
+            
+            // Add a data attribute to remember which dropdown is disabled
+            customParamValue.dataset.linkedParam = selectedParam;
+        }
+    } else {
+        // If no parameter is selected, re-enable all dropdowns
+        const linkedParam = customParamValue.dataset.linkedParam;
+        if (linkedParam) {
+            const paramDropdown = document.getElementById(linkedParam);
+            if (paramDropdown) {
+                paramDropdown.disabled = false;
+            }
+            // Clear the data attribute
+            delete customParamValue.dataset.linkedParam;
+        }
+    }
+}
+
 // Initialize application when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize charts
@@ -26,7 +59,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Set up event listeners
-    document.getElementById('toggleSimulation').addEventListener('click', toggleSimulation);
+    const toggleSimBtn = document.getElementById('toggleSimulation');
+    if (toggleSimBtn) {
+        toggleSimBtn.addEventListener('click', toggleSimulation);
+    }
+    
+    // Add event listener for form submission to handle custom parameters
+    const predictionForm = document.getElementById('predictionForm');
+    if (predictionForm) {
+        predictionForm.addEventListener('submit', function(e) {
+            // If custom parameter is set, make sure it's included in the form
+            const customParamName = document.getElementById('custom_param_name');
+            const customParamValue = document.getElementById('custom_param_value');
+            
+            if (customParamName && customParamValue && 
+                customParamName.value && customParamValue.value) {
+                // Make sure the custom parameter is included even if its regular dropdown is disabled
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = customParamName.value;
+                hiddenInput.value = customParamValue.value;
+                predictionForm.appendChild(hiddenInput);
+            }
+        });
+    }
 });
 
 // Populate metrics tables with data from model_metrics.js

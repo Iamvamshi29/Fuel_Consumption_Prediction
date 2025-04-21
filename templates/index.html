@@ -85,6 +85,29 @@
                             </div>
                             
                             <!-- Dropdown Parameters -->
+                            <!-- Custom Parameter Dropdown -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="border-bottom pb-2 mb-3">Custom Manual Parameter</h6>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="custom_param_name" class="form-label">Parameter Name</label>
+                                    <select class="form-select" id="custom_param_name" name="custom_param_name" onchange="updateCustomField()">
+                                        <option value="">Select a parameter...</option>
+                                        {% for feature_key, feature_name in extended_features.items() %}
+                                            {% if feature_key not in ['rpm', 'speed', 'throttle_position', 'acceleration', 'engine_load'] %}
+                                                <option value="{{ feature_key }}">{{ feature_name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="custom_param_value" class="form-label">Custom Value</label>
+                                    <input type="number" class="form-control" id="custom_param_value" name="custom_param_value" placeholder="Enter custom value" step="0.01">
+                                </div>
+                            </div>
+
+                            <!-- Standard Parameter Dropdowns -->
                             <div class="row mb-4">
                                 <div class="col-12">
                                     <h6 class="border-bottom pb-2 mb-3">Additional Parameters (All Dropdowns)</h6>
