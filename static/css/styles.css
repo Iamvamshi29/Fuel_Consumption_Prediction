@@ -1,0 +1,98 @@
+/* Custom styles for Fuel Consumption Analyzer */
+
+/* Override default Bootstrap styles */
+body {
+    min-height: 100vh;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+/* Card styling */
+.card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom progress bar colors */
+.progress {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Chart containers */
+canvas {
+    min-height: 300px;
+}
+
+/* Make tables more readable in dark mode */
+.table {
+    color: var(--bs-light);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Make sure charts have enough space */
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+    h4 {
+        font-size: 1.2rem;
+    }
+    
+    h6 {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tooltip styling */
+.tooltip {
+    opacity: 0.95 !important;
+}
+
+.tooltip-inner {
+    max-width: 300px;
+    padding: 10px;
+    background-color: var(--bs-dark);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Badge styling for model predictions */
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* Tab styling */
+.nav-tabs .nav-link {
+    color: var(--bs-light);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: transparent;
+    border-color: #fff #fff transparent;
+    color: var(--bs-light);
+}
+
+/* Information section styling */
+.card li {
+    margin-bottom: 0.5rem;
+}
