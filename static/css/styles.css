@@ -31,6 +31,18 @@ canvas {
     min-height: 300px;
 }
 
+/* Fixed height for metrics charts to prevent expansion */
+#classificationMetricsChart, #regressionMetricsChart {
+    height: 300px !important;
+    max-height: 300px !important;
+}
+
+/* Fixed height containers for metrics comparison */
+.metrics-chart-container {
+    height: 350px;
+    position: relative;
+}
+
 /* Make tables more readable in dark mode */
 .table {
     color: var(--bs-light);

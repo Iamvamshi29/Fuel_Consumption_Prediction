@@ -236,6 +236,12 @@ function initClassificationMetricsChart(metrics) {
                         }
                     }
                 }
+            },
+            // Prevent chart from growing by setting a fixed height
+            onResize: function(chart, size) {
+                if (size.height > 300) {
+                    chart.height = 300;
+                }
             }
         }
     });
@@ -347,6 +353,12 @@ function initRegressionMetricsChart(metrics) {
                     grid: {
                         drawOnChartArea: false
                     }
+                }
+            },
+            // Prevent chart from growing by setting a fixed height
+            onResize: function(chart, size) {
+                if (size.height > 300) {
+                    chart.height = 300;
                 }
             }
         }
