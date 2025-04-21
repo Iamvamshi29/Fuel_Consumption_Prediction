@@ -131,9 +131,9 @@ def create_sample_data():
                        0.15 * np.abs(acceleration) + 0.1 * engine_load)
     fuel_consumption += np.random.normal(0, 1, n_samples)  # Add some noise
     
-    # Economic driving is when fuel consumption is below average
-    economic_threshold = np.percentile(fuel_consumption, 60)
-    is_economic = (fuel_consumption < economic_threshold).astype(int)
+    # Economic driving is when fuel consumption is ≤ 7.5 L/h
+    economic_threshold = 7.5  # Updated fixed threshold
+    is_economic = (fuel_consumption <= economic_threshold).astype(int)
     
     # Add timestamp
     timestamps = [int(time.time()) + i for i in range(n_samples)]

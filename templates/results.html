@@ -107,6 +107,7 @@
                                         {% set best_class_result = predictions.classification_results[best_class_model] %}
                                         {% set is_economic = best_class_result >= 0.5 %}
                                         {% set best_reg_result = predictions.regression_results[best_reg_model] %}
+                                        {% set is_economic_by_consumption = best_reg_result <= 7.5 %}
                                         
                                         <div class="text-center mb-4">
                                             <div class="mb-3">
@@ -127,12 +128,18 @@
                                             <div>
                                                 <h6>Fuel Consumption ({{ best_reg_model }})</h6>
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <span class="display-6 me-2">
+                                                    <span class="display-6 me-2 {{ 'text-success' if is_economic_by_consumption else 'text-danger' }}">
                                                         <i class="fas fa-tachometer-alt"></i>
                                                     </span>
-                                                    <h3>
+                                                    <h3 class="{{ 'text-success' if is_economic_by_consumption else 'text-danger' }}">
                                                         {{ best_reg_result | round(2) }} L/h
                                                     </h3>
+                                                </div>
+                                                <div class="mt-1 {{ 'text-success' if is_economic_by_consumption else 'text-danger' }}">
+                                                    <strong>{{ "Less Consumption" if is_economic_by_consumption else "More Consumption" }}</strong>
+                                                    <div class="small">
+                                                        {{ "≤ 7.5 L/h (Economical)" if is_economic_by_consumption else "> 7.5 L/h (Non-Economical)" }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,13 +199,23 @@
                                                             <tr>
                                                                 <th>Model</th>
                                                                 <th>Predicted Fuel Consumption</th>
+                                                                <th>Classification</th>
+                                                                <th>Consumption Level</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {% for model_name, consumption in predictions.regression_results.items() %}
+                                                            {% set is_economic_by_consumption = consumption <= 7.5 %}
                                                             <tr class="{{ 'table-success' if model_name == best_reg_model else '' }}">
                                                                 <td>{{ model_name }}</td>
                                                                 <td>{{ consumption | round(2) }} L/h</td>
+                                                                <td class="{{ 'text-success' if is_economic_by_consumption else 'text-danger' }}">
+                                                                    <i class="fas {{ 'fa-leaf' if is_economic_by_consumption else 'fa-fire' }} me-2"></i>
+                                                                    {{ "Economical" if is_economic_by_consumption else "Non-Economical" }}
+                                                                </td>
+                                                                <td class="{{ 'text-success' if is_economic_by_consumption else 'text-danger' }}">
+                                                                    {{ "Less Consumption" if is_economic_by_consumption else "More Consumption" }}
+                                                                </td>
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>

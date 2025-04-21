@@ -63,8 +63,8 @@ function initStaticFuelConsumptionChart() {
                     fill: false
                 },
                 {
-                    label: 'Threshold',
-                    data: Array(60).fill(12), // Constant threshold line
+                    label: 'Economic Threshold (7.5 L/h)',
+                    data: Array(60).fill(7.5), // Using 7.5 L/h as the threshold
                     borderColor: 'rgba(255, 159, 64, 0.8)',
                     backgroundColor: 'transparent',
                     borderDash: [5, 5],
