@@ -90,14 +90,9 @@ extended_features = {
     'alternator_power': 'Alternator power'
 }
 
-# Features available as dropdown options
-dropdown_features = [
-    'filtered_engine_speed', 'engine_speed', 'vehicle_speed', 'accelerator_position',
-    'throttle_position', 'manifold_pressure', 'fuel_consumption', 'battery_voltage',
-    'ambient_temp', 'intake_temp', 'coolant_temp', 'brake_state', 'clutch_state',
-    'relative_throttle', 'vehicle_accel_state', 'catalyst_warmup', 'effective_torque',
-    'alternator_power', 'total_distance', 'gas_consumption'
-]
+# All features are dropdown options except the 5 required ones
+dropdown_features = [key for key in extended_features.keys() 
+                    if key not in ['rpm', 'speed', 'throttle_position', 'acceleration', 'engine_load']]
 
 # Initialize data and models
 def init_app():
