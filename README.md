@@ -73,9 +73,8 @@ Predicted Consumption: 9.84 L/h (Non-Economical)
 
 Clone the repository
 
-git clone https://github.com/yourusername/fuel-consumption-analyzer.git
+git clone(https://github.com/Iamvamshi29/Fuel_Consumption_Prediction.git)
 cd fuel-consumption-analyzer
-
 
 Install dependencies
 
