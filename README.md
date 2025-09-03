@@ -41,6 +41,13 @@ ML/AI Libraries: Scikit-learn, XGBoost
 
 🔹 Screenshots
 Fuel Consumption & Driving Behavior Graphs
+<img width="1077" height="605" alt="drivinggraph" src="https://github.com/user-attachments/assets/c1468a5f-57c5-4693-8119-100aee16beba" />
+<img width="1009" height="553" alt="graph" src="https://github.com/user-attachments/assets/ad6e8548-597c-461f-a002-f7a317273030" />
+<img width="1056" height="593" alt="Predict1" src="https://github.com/user-attachments/assets/72cf5e5a-d360-4a02-92e8-05642b8e5d97" />
+<img width="1056" height="594" alt="Predict2" src="https://github.com/user-attachments/assets/054b3458-0e95-4c0d-b86e-324b75cea642" />
+<img width="1076" height="605" alt="Result" src="https://github.com/user-attachments/assets/658abdf1-8f28-4ff0-9090-c0478f736646" />
+<img width="1114" height="626" alt="Result2" src="https://github.com/user-attachments/assets/e47dff9a-da3d-412c-93da-2ab8e46be383" />
+
 
 
 
